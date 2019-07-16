@@ -1,0 +1,332 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
+<html>
+<head>
+<meta http-equiv="Content-Language" content="en" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Yahoo store Manager</title>
+<!-- css tree menu -->
+<link rel="stylesheet" href="../lib/js/treemenu/css/drag-drop-folder-tree.css" type="text/css"></link>
+<link rel="stylesheet" href="../lib/js/treemenu/css/context-menu.css" type="text/css"></link>
+<style type="text/css">
+/* CSS for the demo */
+img{
+	border:0px;
+}
+</style>
+<!-- end css tree menu -->
+<!-- js treemenu -->
+<script type="text/javascript" src="../lib/js/treemenu/js/drag-drop-folder-tree2.js"></script>
+<!--  end js treemenu -->
+<script type="text/javascript" src="../lib/splitter/jquery.js"></script>
+<script type="text/javascript" src="../lib/splitter/splitter.js"></script>
+
+<!-- General page styles (not critical to the demos) -->
+<!--<link rel="stylesheet" type="text/css" href="http://www.methvin.com/splitter/main.css" />-->
+
+<style type="text/css" media="all">
+#MySplitter {
+	border: 3px solid #669;
+	min-width: 500px;	/* Splitter can't be too thin ... */
+	min-height: 300px;	/* ... or too flat */
+	height: 100%;
+}
+#MySplitter .Pane {
+	overflow: auto;
+}
+
+/* Splitbar styles; these are the default class names */
+
+.vsplitbar {
+	width: 6px;
+	background: #669 url(../lib/splitter/vgrabber.gif) no-repeat center;
+}
+.vsplitbar:hover, .vsplitbar.active {
+	background: #c66 url(../lib/splitter/vgrabber.gif) no-repeat center;
+	opacity: 0.7;
+	filter: alpha(opacity=70); /* IE */
+}
+.hsplitbar {
+	height: 6px;
+	background: #669 url(../lib/splitter/hgrabber.gif) no-repeat center;
+}
+.hsplitbar.active, .hsplitbar:hover {
+	background: #c66 url(../lib/splitter/hgrabber.gif) no-repeat center;
+	opacity: 0.7;
+	filter: alpha(opacity=70); /* IE */
+}
+</style>
+<script type="text/javascript">
+$().ready(function() {
+	// Vertical splitter. Set min/max/starting sizes for the left pane.
+	$("#MySplitter").splitter({
+		splitVertical: true,
+		outline: true,
+		sizeLeft: 250, minLeft: 100, maxLeft: 550,
+		anchorToWindow: true,
+		accessKey: "L"
+	});
+	// First horizontal splitters, nested in the right pane of the vertical splitter.
+	$("#TopSplitter").splitter({
+		splitVertical: true,
+		outline: true,
+		//sizeTop: 100, minTop: 50, maxTop: 200,
+		sizeLeft: 400, minLeft: 100, maxLeft: 550,
+		accessKey: "V"
+	});
+	// Second horizontal splitter, nested in bottom pane of first horizontal splitter
+	$("#BottomSplitter").splitter({
+		splitHorizontal: true,
+		outline: true,
+		sizeBottom: 0, minTop: 0,
+		accessKey: "J"
+	});
+	});
+</script>
+<script type="text/javascript">
+function photoinfo(photo_id){
+	var flickrAPIinfo = '';
+	//flickrAPIinfo += 'https://api.flickr.com/services/rest/';
+	flickrAPIinfo += 'redrose/auth/xuly.php';
+	flickrAPIinfo += '?method=flickr.photos.getInfo';
+	flickrAPIinfo += '&api_key=ccbdc96e79805d04973cb061d1ccb7a0';
+	flickrAPIinfo += '&photo_id='+photo_id;
+	flickrAPIinfo += '&redrose=photoinfo';
+	flickrAPIinfo += '&format=json';
+	flickrAPIinfo += '&nojsoncallback=1';
+
+	var xhr= new XMLHttpRequest();
+	xhr.open("GET",flickrAPIinfo,true);
+	xhr.send();
+	xhr.onreadystatechange=function(){
+		if(xhr.readyState==4 && xhr.status==200) {
+			var myArray = JSON.parse(xhr.responseText);
+			console.log(myArray);
+			var dataobj=myArray[0];
+			//console.log(dataobj.description._content);
+			
+			//document.write(dataobj.tags.tag);
+			//alert(dataobj.tags.tag);
+			//document.write(dataobj.description._content);
+			var tit=dataobj.title._content;			
+			var des=dataobj.description._content;
+			var date=dataobj.dates.taken;
+						
+			var urlarr=dataobj.urls.url;
+			//console.log(urlarr);
+			var url=urlarr[0]._content;
+			var urldown='https://www.flickr.com/video_download.gne?id='+photo_id;
+			//https://www.flickr.com/video_download.gne?id=30667348232
+			
+			var desparr=des.split('|');
+			var desinfo=desparr[0];			
+			if(typeof desparr[1] != "undefined"){
+				var img=desparr[1];
+			}else{
+				var img='https://lh3.googleusercontent.com/ZXI3zv3IjEv8H8XEUBlUEXwBVwPe1C4RIQ9UAs8RQ9fdCR1ZNjVOsWrufNa5l21BOptdHyJ3F0vr9KSwqt1mQh1XoRnUtfqxVxai5YhNSOPM7PiOSJGC-RQa6jxXaikWtdA5d1qm0oqHWdGqrfmA2RJMz6r80wjAo1kYMvtmHVb1-vZr5sRRUxLAuzvC-UEKjQVZnpeMw5qPzrXp4VD4TgZ8u79rvmSwYLVTuBNfKHk7hRbwZrDUZZ4aLHhAYaKpVwHxypVLWwTBJjOcaenr53omGpfjp-dgw3tg3-MDURHv9zwzZ2GCi1RfChm2RNRUfACxWHyfP_ABkI5AoqHQUnRIqqcM78o_y2tsTZDGGy1u00Lb9xA9QDZs2Vpw7cK_Y_jaUA8XNm80tpUjaO9Y_w8rqtIv4-7Oc3u2b-IlEQWrxWHNn-9uZ09q88KvAnLtMV4JxvDZfiMDAkxyBYZbRt36mK_7onsa9YY-TImyIaEnh45Y1F6_Frq83xmyt5iY_QFGrvrO1pgZxirfIehITBbLLdvXLd9rW8Pm9jyrnj_Bgb95GZAcXPsMuULJnfoALk8lHfTo4P8CulZL6ey5PuyM91rYrX9t2AnNtedSbq7H5wE=w607-h337-no';
+			}
+			
+			document.getElementById('photoinfo').innerHTML='';
+			document.getElementById('photoinfo').innerHTML+='<h1>'+tit+'</h1>';
+			//document.getElementById('photoinfo').innerHTML+='<br>';
+			document.getElementById('photoinfo').innerHTML+='<i>'+date+'</i>';
+			document.getElementById('photoinfo').innerHTML+='<br><br>';			
+			document.getElementById('photoinfo').innerHTML+='Đường dẫn: <a href="'+url+'" target="_blank">'+url+'</a>';
+			document.getElementById('photoinfo').innerHTML+='<br><br>';
+			document.getElementById('photoinfo').innerHTML+='Download: <a href="'+urldown+'" target="_blank">'+urldown+'</a>';
+			document.getElementById('photoinfo').innerHTML+='<br><br>';
+			document.getElementById('photoinfo').innerHTML+=desinfo;
+			document.getElementById('photoinfo').innerHTML+='<br><br>';
+			document.getElementById('photoinfo').innerHTML+='<img src="'+img+'">';
+			/*
+			//document.write(myArray.photo.tags.tag);
+			//alert(myArray.photo.tags.tag);
+			//document.write(myArray.photo.description._content);
+			var tit=myArray.photo.title._content;			
+			var des=myArray.photo.description._content;
+			var date=myArray.photo.dates.taken;
+						
+			var urlarr=myArray.photo.urls.url;
+			//console.log(urlarr);
+			var url=urlarr[0]._content;
+			var urldown='https://www.flickr.com/video_download.gne?id='+photo_id;
+			//https://www.flickr.com/video_download.gne?id=30667348232
+			
+			var desparr=des.split('|');
+			var desinfo=desparr[0];			
+			if(typeof desparr[1] != "undefined"){
+				var img=desparr[1];
+			}else{
+				var img='https://lh3.googleusercontent.com/ZXI3zv3IjEv8H8XEUBlUEXwBVwPe1C4RIQ9UAs8RQ9fdCR1ZNjVOsWrufNa5l21BOptdHyJ3F0vr9KSwqt1mQh1XoRnUtfqxVxai5YhNSOPM7PiOSJGC-RQa6jxXaikWtdA5d1qm0oqHWdGqrfmA2RJMz6r80wjAo1kYMvtmHVb1-vZr5sRRUxLAuzvC-UEKjQVZnpeMw5qPzrXp4VD4TgZ8u79rvmSwYLVTuBNfKHk7hRbwZrDUZZ4aLHhAYaKpVwHxypVLWwTBJjOcaenr53omGpfjp-dgw3tg3-MDURHv9zwzZ2GCi1RfChm2RNRUfACxWHyfP_ABkI5AoqHQUnRIqqcM78o_y2tsTZDGGy1u00Lb9xA9QDZs2Vpw7cK_Y_jaUA8XNm80tpUjaO9Y_w8rqtIv4-7Oc3u2b-IlEQWrxWHNn-9uZ09q88KvAnLtMV4JxvDZfiMDAkxyBYZbRt36mK_7onsa9YY-TImyIaEnh45Y1F6_Frq83xmyt5iY_QFGrvrO1pgZxirfIehITBbLLdvXLd9rW8Pm9jyrnj_Bgb95GZAcXPsMuULJnfoALk8lHfTo4P8CulZL6ey5PuyM91rYrX9t2AnNtedSbq7H5wE=w607-h337-no';
+			}
+			
+			document.getElementById('photoinfo').innerHTML='';
+			document.getElementById('photoinfo').innerHTML+='<h1>'+tit+'</h1>';
+			//document.getElementById('photoinfo').innerHTML+='<br>';
+			document.getElementById('photoinfo').innerHTML+='<i>'+date+'</i>';
+			document.getElementById('photoinfo').innerHTML+='<br><br>';			
+			document.getElementById('photoinfo').innerHTML+='Đường dẫn: <a href="'+url+'" target="_blank">'+url+'</a>';
+			document.getElementById('photoinfo').innerHTML+='<br><br>';
+			document.getElementById('photoinfo').innerHTML+='Download: <a href="'+urldown+'" target="_blank">'+urldown+'</a>';
+			document.getElementById('photoinfo').innerHTML+='<br><br>';
+			document.getElementById('photoinfo').innerHTML+=desinfo;
+			document.getElementById('photoinfo').innerHTML+='<br><br>';
+			document.getElementById('photoinfo').innerHTML+='<img src="'+img+'">';
+			*/
+			
+		}
+	};
+}
+
+function listphoto(user_id,tags,idshow) {
+	var flickrAPI = '';
+	flickrAPI += 'redrose/auth/xuly.php';
+	flickrAPI += '?method=flickr.photos.search';
+	flickrAPI += '&api_key=ccbdc96e79805d04973cb061d1ccb7a0';
+	flickrAPI += '&user_id='+user_id;
+	flickrAPI += '&tags='+tags;
+	flickrAPI += '&format=json';
+	flickrAPI += '&redrose=listphoto';
+	flickrAPI += '&per_page=500';
+	flickrAPI += '&nojsoncallback=1';
+	
+    var xhr= new XMLHttpRequest();
+    xhr.open("GET",flickrAPI,true);
+    xhr.send();
+    xhr.onreadystatechange=function(){
+        if(xhr.readyState==4 && xhr.status==200) {
+            var myArray = JSON.parse(xhr.responseText);
+			console.log(myArray);
+			var dataobj=myArray[0].photo;
+			
+			document.getElementById('photoinfo').innerHTML='';
+			document.getElementById(idshow).innerHTML='';
+			for (j=0;j<dataobj.length;j++){
+				var title=dataobj[j].title;
+				var photo_id=dataobj[j].id;
+				document.getElementById(idshow).innerHTML+=('<li id="'+photo_id+'"><img src="text-file-5-16.gif"><a style="cursor:pointer" href="javascript:photoinfo(\''+photo_id+'\')">'+title+'</a></li>');
+				
+			}
+			//console.log(dataobj[0].id);
+			//document.write(myArray.photos.photo[0].id);
+			//console.log(myArray[0].photo[0].id);
+			/*
+			document.getElementById('photoinfo').innerHTML='';
+			document.getElementById(idshow).innerHTML='';
+			for (j=0;j<myArray.photos.photo.length;j++){
+				var title=myArray.photos.photo[j].title;
+				var photo_id=myArray.photos.photo[j].id;
+				document.getElementById(idshow).innerHTML+=('<li id="'+photo_id+'"><img src="text-file-5-16.gif"><a style="cursor:pointer" href="javascript:photoinfo(\''+photo_id+'\')">'+title+'</a></li>');
+				
+			}
+			*/
+        }
+    };
+};
+
+//listphoto();
+//photoinfo('30667348232');
+//listphoto('146329215@N08','gdrive_soiqualang.chentreu','haha');
+</script>
+</head>
+<body>
+
+<div id="MySplitter">
+
+  <div class="Left Pane">
+		<h2>Yahoo store Manager</h2>
+		<!-- treemenu -->
+		<ul id="dhtmlgoodies_tree2" class="dhtmlgoodies_tree">
+		<li id="node0" noDrag="true" noSiblings="true" noDelete="true" noRename="true"><a style="cursor:pointer">DoLongStore</a>
+			<ul>
+				<li id="node1" onclick="javacript:listphoto('146329215@N08','gdrive_soiqualang.chentreu','haha');"><a style="cursor:pointer">gdrive_soiqualang.chentreu</a>
+					<ul>
+					</ul>
+				</li>
+				<li id="node1" onclick="javacript:listphoto('146329215@N08','gisdata','haha');"><a style="cursor:pointer">GIS Data</a>
+					<ul>
+					</ul>
+				</li>
+				<li id="node1" onclick="javacript:listphoto('146329215@N08','hoctap','haha');"><a style="cursor:pointer">Tài liệu học tập</a>
+					<ul>
+					</ul>
+				</li>
+				<li id="node1" onclick="javacript:listphoto('146329215@N08','phanmem','haha');"><a style="cursor:pointer">Phần mềm</a>
+					<ul>
+					</ul>
+				</li>
+				<li id="node1" onclick="javacript:listphoto('146329215@N08','phoneapp','haha');"><a style="cursor:pointer">Phone Apps</a>
+					<ul>
+					</ul>
+				</li>
+				<li id="node1" onclick="javacript:listphoto('146329215@N08','webapp','haha');"><a style="cursor:pointer">Web Apps</a>
+					<ul>
+					</ul>
+				</li>
+				<li id="node1" onclick="javacript:listphoto('146329215@N08','private','haha');"><a style="cursor:pointer">Private</a>
+					<ul>
+					</ul>
+				</li>
+				<li id="node1" onclick="javacript:listphoto('146329215@N08','ebook','haha');"><a style="cursor:pointer">Ebook</a>
+					<ul>
+					</ul>
+				</li>
+				<li id="node1" onclick="javacript:listphoto('146329215@N08','img','haha');"><a style="cursor:pointer">Hình ảnh</a>
+					<ul>
+					</ul>
+				</li>
+				<li id="node1" onclick="javacript:listphoto('146329215@N08','video','haha');"><a style="cursor:pointer">Video</a>
+					<ul>
+					</ul>
+				</li>
+				<li id="node1" onclick="javacript:listphoto('146329215@N08','backup','haha');"><a style="cursor:pointer">Backup</a>
+					<ul>
+					</ul>
+				</li>
+				<li id="node1" onclick="javacript:listphoto('146329215@N08','data','haha');"><a style="cursor:pointer">Datas</a>
+					<ul>
+					</ul>
+				</li>
+				<li id="node1" onclick="javacript:listphoto('146329215@N08','test','haha');"><a style="cursor:pointer">Test</a>
+					<ul>
+					</ul>
+				</li>
+			</ul>
+		</li>
+		</ul>
+		<br>
+		<a href="#" onclick="treeObj.collapseAll()">Thu gọn tất cả</a> | 
+		<a href="#" onclick="treeObj.expandAll()">Mở rộng tất cả</a>
+		<!-- end test treemenu -->
+		<script type="text/javascript">	
+		treeObj = new JSDragDropTree();
+		treeObj.setTreeId('dhtmlgoodies_tree2');
+		treeObj.setMaximumDepth(7);
+		treeObj.setMessageMaximumDepthReached('Maximum depth reached'); // If you want to show a message when maximum depth is reached, i.e. on drop.
+		treeObj.initTree();
+		treeObj.expandAll();
+		</script>
+  </div> 
+
+  <div id="TopSplitter"> 
+ 
+	<div class="Top Pane">
+		<ul class="dhtmlgoodies_tree">
+			<div id="haha"></div>
+		</ul>
+	</div>
+	
+	<div id="BottomSplitter">
+		<div id="photoinfo" class="Middle Pane">
+		</div>
+		<div class="Bottom Pane">
+			
+		</div>
+	</div>
+	
+  </div> 
+  
+</div> <!-- #MySplitter -->
+
+</body>
+</html>

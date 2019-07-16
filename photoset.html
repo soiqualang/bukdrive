@@ -1,0 +1,365 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
+<html>
+<head>
+<meta http-equiv="Content-Language" content="en" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Yahoo store Manager</title>
+<!-- css tree menu -->
+<link rel="stylesheet" href="../lib/js/treemenu/css/drag-drop-folder-tree.css" type="text/css"></link>
+<link rel="stylesheet" href="../lib/js/treemenu/css/context-menu.css" type="text/css"></link>
+<style type="text/css">
+/* CSS for the demo */
+img{
+	border:0px;
+}
+</style>
+<!-- end css tree menu -->
+<!-- js treemenu -->
+<script type="text/javascript" src="../lib/js/treemenu/js/drag-drop-folder-tree2.js"></script>
+<!--  end js treemenu -->
+<script type="text/javascript" src="../lib/splitter/jquery.js"></script>
+<script type="text/javascript" src="../lib/splitter/splitter.js"></script>
+
+<!-- General page styles (not critical to the demos) -->
+<!--<link rel="stylesheet" type="text/css" href="http://www.methvin.com/splitter/main.css" />-->
+
+<style type="text/css" media="all">
+#MySplitter {
+	border: 3px solid #669;
+	min-width: 500px;	/* Splitter can't be too thin ... */
+	min-height: 300px;	/* ... or too flat */
+	height: 100%;
+}
+#MySplitter .Pane {
+	overflow: auto;
+}
+
+/* Splitbar styles; these are the default class names */
+
+.vsplitbar {
+	width: 6px;
+	background: #669 url(../lib/splitter/vgrabber.gif) no-repeat center;
+}
+.vsplitbar:hover, .vsplitbar.active {
+	background: #c66 url(../lib/splitter/vgrabber.gif) no-repeat center;
+	opacity: 0.7;
+	filter: alpha(opacity=70); /* IE */
+}
+.hsplitbar {
+	height: 6px;
+	background: #669 url(../lib/splitter/hgrabber.gif) no-repeat center;
+}
+.hsplitbar.active, .hsplitbar:hover {
+	background: #c66 url(../lib/splitter/hgrabber.gif) no-repeat center;
+	opacity: 0.7;
+	filter: alpha(opacity=70); /* IE */
+}
+</style>
+<script type="text/javascript">
+$().ready(function() {
+	// Vertical splitter. Set min/max/starting sizes for the left pane.
+	$("#MySplitter").splitter({
+		splitVertical: true,
+		outline: true,
+		sizeLeft: 250, minLeft: 100, maxLeft: 550,
+		anchorToWindow: true,
+		accessKey: "L"
+	});
+	// First horizontal splitters, nested in the right pane of the vertical splitter.
+	$("#TopSplitter").splitter({
+		splitVertical: true,
+		outline: true,
+		//sizeTop: 100, minTop: 50, maxTop: 200,
+		sizeLeft: 400, minLeft: 100, maxLeft: 550,
+		accessKey: "V"
+	});
+	// Second horizontal splitter, nested in bottom pane of first horizontal splitter
+	$("#BottomSplitter").splitter({
+		splitHorizontal: true,
+		outline: true,
+		sizeBottom: 0, minTop: 0,
+		accessKey: "J"
+	});
+	});
+</script>
+<script type="text/javascript">
+function photoinfo(photo_id){
+	var flickrAPIinfo = '';
+	flickrAPIinfo += 'redrose/auth/xuly.php';
+	flickrAPIinfo += '?method=flickr.photos.getInfo';
+	flickrAPIinfo += '&api_key=ccbdc96e79805d04973cb061d1ccb7a0';
+	flickrAPIinfo += '&photo_id='+photo_id;
+	flickrAPIinfo += '&redrose=photoinfo';
+	flickrAPIinfo += '&format=json';
+	flickrAPIinfo += '&nojsoncallback=1';
+
+	var xhr= new XMLHttpRequest();
+	xhr.open("GET",flickrAPIinfo,true);
+	xhr.send();
+	xhr.onreadystatechange=function(){
+		if(xhr.readyState==4 && xhr.status==200) {
+			var myArray = JSON.parse(xhr.responseText);
+			console.log(myArray);
+			var dataobj=myArray[0];
+			var tit=dataobj.title._content;			
+			var des=dataobj.description._content;
+			var date=dataobj.dates.taken;
+						
+			var urlarr=dataobj.urls.url;
+			var url=urlarr[0]._content;
+			var urldown='https://www.flickr.com/video_download.gne?id='+photo_id;
+			
+			var desparr=des.split('|');
+			var desinfo=desparr[0];			
+			if(typeof desparr[1] != "undefined"){
+				var img=desparr[1];
+			}else{
+				var img='https://lh3.googleusercontent.com/JtU_L5xHNwDohLsdfOuu_UdVl9hqW69a_DoHtz7ndEUwfxOPiPR0xOhpbCZB9l4HjOAzPyMf3aCUeIiIgZDZBGdl9L4Og08HouoT_y5noNtlxJSk7Q5iLDKOPuWZP2hz5i7kN5j24A-RBk0XhqqV_2ubivAtbfBn7sY73cGCkll_Zla0ObFRufRUNdE8_ZKAesySGAlGQK9AWYAZGhhiA0b5sSyq1w20wilIDC3VwHPjjLPlE_9s86tpoGo0kM-bH1amIfaUxouRmnmxdjxW4DB5vpeJ9cPMKhxLiC4pJBt1Mh0XtogGNSyqljUiNiSLXoGxXCqoxzvjeOqqcLvetUuzb5O5F73OAkhr0p8tvPV81tVGoqD6Kk2PKUOlmGbbkTu9QyFt68ng-S33Po5yMUbtadHI96LxFgewTnk67Stj9-dPcksH6SmQoWAqq7T7ToEKOokK0PvkWyrr6RPbdGZxyr1xa1vBaRHXCr4uxrh6yXXKA7QeE3exznsDOnDYAWEFMciARxFMOesLg05Jt12Ru1vktRGZJAky0Jd8BbwozJmVHXU8HErdE9aB72Q3gSF9F1pCIu1tflvsuWzalVj1blyvFFNXudj0j6U=w172-h336-no';
+			}
+			
+			document.getElementById('photoinfo').innerHTML='';
+			document.getElementById('photoinfo').innerHTML+='<h1>'+tit+'</h1>';
+			document.getElementById('photoinfo').innerHTML+='<i>'+date+'</i>';
+			document.getElementById('photoinfo').innerHTML+='<br><br>';			
+			document.getElementById('photoinfo').innerHTML+='Đường dẫn: <a href="'+url+'" target="_blank">'+url+'</a>';
+			document.getElementById('photoinfo').innerHTML+='<br><br>';
+			document.getElementById('photoinfo').innerHTML+='Download: <a href="'+urldown+'" target="_blank">'+urldown+'</a>';
+			document.getElementById('photoinfo').innerHTML+='<br><br>';
+			document.getElementById('photoinfo').innerHTML+=desinfo;
+			document.getElementById('photoinfo').innerHTML+='<br><br>';
+			document.getElementById('photoinfo').innerHTML+='<center><img src="'+img+'"></center>';
+		}
+	};
+}
+
+function listphoto(user_id,tags,idshow) {
+	var flickrAPI = '';
+	flickrAPI += 'redrose/auth/xuly.php';
+	flickrAPI += '?method=flickr.photos.search';
+	flickrAPI += '&api_key=ccbdc96e79805d04973cb061d1ccb7a0';
+	flickrAPI += '&user_id='+user_id;
+	flickrAPI += '&tags='+tags;
+	flickrAPI += '&format=json';
+	flickrAPI += '&redrose=listphoto';
+	flickrAPI += '&per_page=500';
+	flickrAPI += '&nojsoncallback=1';
+	
+    var xhr= new XMLHttpRequest();
+    xhr.open("GET",flickrAPI,true);
+    xhr.send();
+    xhr.onreadystatechange=function(){
+        if(xhr.readyState==4 && xhr.status==200) {
+            var myArray = JSON.parse(xhr.responseText);
+			console.log(myArray);
+			var dataobj=myArray[0].photo;
+			
+			document.getElementById('photoinfo').innerHTML='';
+			document.getElementById(idshow).innerHTML='';
+			for (j=0;j<dataobj.length;j++){
+				var title=dataobj[j].title;
+				var photo_id=dataobj[j].id;
+				document.getElementById(idshow).innerHTML+=('<li id="'+photo_id+'"><img src="text-file-5-16.gif"><a style="cursor:pointer" href="javascript:photoinfo(\''+photo_id+'\')">'+title+'</a></li>');
+				
+			}
+        }
+    };
+};
+function listtag() {
+	var flickrAPI = '';
+	flickrAPI += 'redrose/auth/xuly.php';
+	flickrAPI += '?method=flickr.tags.getMostFrequentlyUsed';
+	flickrAPI += '&api_key=ccbdc96e79805d04973cb061d1ccb7a0';
+	flickrAPI += '&format=json';
+	flickrAPI += '&redrose=listtag';
+	flickrAPI += '&per_page=500';
+	flickrAPI += '&nojsoncallback=1';
+	
+    var xhr= new XMLHttpRequest();
+    xhr.open("GET",flickrAPI,true);
+    xhr.send();
+    xhr.onreadystatechange=function(){
+        if(xhr.readyState==4 && xhr.status==200) {
+            var myArray = JSON.parse(xhr.responseText);
+			console.log(myArray);
+			/*
+			var dataobj=myArray[0].photo;
+			
+			document.getElementById('photoinfo').innerHTML='';
+			document.getElementById(idshow).innerHTML='';
+			for (j=0;j<dataobj.length;j++){
+				var title=dataobj[j].title;
+				var photo_id=dataobj[j].id;
+				document.getElementById(idshow).innerHTML+=('<li id="'+photo_id+'"><img src="text-file-5-16.gif"><a style="cursor:pointer" href="javascript:photoinfo(\''+photo_id+'\')">'+title+'</a></li>');
+				
+			}
+			*/
+        }
+    };
+};
+//listtag();
+
+function album2photo(user_id,photoset_id,idshow){
+	var flickrAPI = '';
+	flickrAPI += 'redrose/auth/xuly.php';
+	flickrAPI += '?method=flickr.photosets.getPhotos';
+	flickrAPI += '&user_id='+user_id;
+	flickrAPI += '&photoset_id='+photoset_id;
+	flickrAPI += '&format=json';
+	flickrAPI += '&redrose=album2photo';
+	flickrAPI += '&per_page=500';
+	
+    var xhr= new XMLHttpRequest();
+    xhr.open("GET",flickrAPI,true);
+    xhr.send();
+    xhr.onreadystatechange=function(){
+        if(xhr.readyState==4 && xhr.status==200) {
+            var myArray = JSON.parse(xhr.responseText);
+			console.log(myArray);
+			var dataobj=myArray[0].photo;
+			
+			document.getElementById('photoinfo').innerHTML='';
+			document.getElementById(idshow).innerHTML='';
+			for (j=0;j<dataobj.length;j++){
+				var title=dataobj[j].title;
+				var photo_id=dataobj[j].id;
+				document.getElementById(idshow).innerHTML+=('<li id="'+photo_id+'"><img src="text-file-5-16.gif"><a style="cursor:pointer" href="javascript:photoinfo(\''+photo_id+'\')">'+title+'</a></li>');
+				
+			}
+        }
+    };
+}
+
+function list_album(user_id,idshow) {
+	var flickrAPI = '';
+	flickrAPI += 'redrose/auth/xuly.php';
+	flickrAPI += '?method=flickr.photosets.getList';
+	flickrAPI += '&redrose=list_album';
+	flickrAPI += '&per_page=500';
+	
+    var xhr= new XMLHttpRequest();
+    xhr.open("GET",flickrAPI,true);
+    xhr.send();
+    xhr.onreadystatechange=function(){
+        if(xhr.readyState==4 && xhr.status==200) {
+            var myArray = JSON.parse(xhr.responseText);
+			console.log(myArray);
+			var dataobj=myArray[0].photoset;
+			//console.log(dataobj.length);
+			//document.getElementById('photoinfo').innerHTML='';
+			document.getElementById(idshow).innerHTML='';
+			for (j=0;j<dataobj.length;j++){
+				var photoset_id=dataobj[j].id;
+				var photoset_title=dataobj[j].title._content;
+				var photoset_description=dataobj[j].description;
+				console.log(photoset_id+'|'+photoset_title+'|'+photoset_description._content);
+				
+				document.getElementById(idshow).innerHTML+='<li id="node'+j+'" onclick="javacript:album2photo(\''+user_id+'\',\''+photoset_id+'\',\'haha\');"><img src="dhtmlgoodies_minus.gif"><img src="dhtmlgoodies_folder.gif"><a  id="nodeATag'+j+'" style="cursor:pointer">'+photoset_title+'</a><ul id="tree_ul_'+j+'" style="display: block;"></ul></li>';		
+			}
+        }
+    };
+};
+
+function timkiem(user_id,text,idshow){
+	var flickrAPI = '';
+	flickrAPI += 'redrose/auth/xuly.php';
+	flickrAPI += '?method=flickr.photos.search';
+	flickrAPI += '&user_id='+user_id;
+	flickrAPI += '&text='+text;
+	flickrAPI += '&format=json';
+	flickrAPI += '&redrose=timkiem';
+	flickrAPI += '&per_page=500';
+	
+    var xhr= new XMLHttpRequest();
+    xhr.open("GET",flickrAPI,true);
+    xhr.send();
+    xhr.onreadystatechange=function(){
+        if(xhr.readyState==4 && xhr.status==200) {
+            var myArray = JSON.parse(xhr.responseText);
+			console.log(myArray);
+			var dataobj=myArray[0].photo;
+			
+			document.getElementById('photoinfo').innerHTML='';
+			document.getElementById(idshow).innerHTML='';
+			for (j=0;j<dataobj.length;j++){
+				var title=dataobj[j].title;
+				var photo_id=dataobj[j].id;
+				document.getElementById(idshow).innerHTML+=('<li id="'+photo_id+'"><img src="text-file-5-16.gif"><a style="cursor:pointer" href="javascript:photoinfo(\''+photo_id+'\')">'+title+'</a></li>');
+				
+			}
+        }
+    };
+}
+function do_timkiem(){
+	var txtkeyword=document.getElementById('txtkeyword').value;
+	if(txtkeyword!=''){
+		timkiem('146329215@N08',txtkeyword,'haha');
+	}else{
+		alert('Chưa nhập từ khóa!');
+	}
+}
+list_album('146329215@N08','menu_cap1');
+</script>
+</head>
+<body>
+
+<div id="MySplitter">
+
+  <div class="Left Pane">
+		<h2>Yahoo store Manager</h2>
+		<input type="text" id="txtkeyword" name="txtkeyword" placeholder="Nhập từ khóa...">
+		<input type="button" id="btn_search" name="btn_search" value="Tìm" onclick="do_timkiem();">
+		<br><br>
+		<!-- treemenu -->
+		<ul id="dhtmlgoodies_tree2" class="dhtmlgoodies_tree">
+		<li id="node0" noDrag="true" noSiblings="true" noDelete="true" noRename="true"><a style="cursor:pointer">DoLongStore</a>
+			<ul>
+				<div id="menu_cap1" name="menu_cap1">				
+				</div>
+			</ul>
+		</li>
+		</ul>
+		<br>
+		<a href="#" onclick="treeObj.collapseAll()">Thu gọn tất cả</a> | 
+		<a href="#" onclick="treeObj.expandAll()">Mở rộng tất cả</a>
+		<!-- end test treemenu -->
+		<script type="text/javascript">	
+		treeObj = new JSDragDropTree();
+		treeObj.setTreeId('dhtmlgoodies_tree2');
+		treeObj.setMaximumDepth(7);
+		treeObj.setMessageMaximumDepthReached('Maximum depth reached');
+		treeObj.initTree();
+		treeObj.expandAll();
+		
+		//nhan nut enter
+		var input = document.getElementById("txtkeyword");
+		input.addEventListener("keyup", function(event) {
+			event.preventDefault();
+			if (event.keyCode === 13) {
+				document.getElementById("btn_search").click();
+			}
+		});
+		</script>
+  </div> 
+
+  <div id="TopSplitter"> 
+ 
+	<div class="Top Pane">
+		<ul class="dhtmlgoodies_tree">
+			<div id="haha"></div>
+		</ul>
+	</div>
+	
+	<div id="BottomSplitter">
+		<div id="photoinfo" class="Middle Pane">
+		</div>
+		<div class="Bottom Pane">
+			
+		</div>
+	</div>
+	
+  </div> 
+  
+</div>
+</body>
+</html>
